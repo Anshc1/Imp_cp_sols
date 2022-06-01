@@ -1,3 +1,6 @@
+/*
+https://codeforces.com/contest/1677/problem/A
+*/
 #include <bits/stdc++.h>
 #define int long long int
 #define Maxx 10000000000000

@@ -1,5 +1,5 @@
 /*
-https://atcoder.jp/contests/abc215/tasks/abc215_e
+https://atcoder.jp/contests/abc214/tasks/abc214_d
 */
 #include <bits/stdc++.h>
 #define int long long int
@@ -64,46 +64,53 @@ template<class T , class V> void _print(map<T, V> x){
     }
     cerr<<" ]"; 
 }
+const int N = 2e5+1; 
+vi sz(N ,0 ); 
+vi parent(N, -1); 
+void makeset(int u){
+    parent[u] =u ;
+    sz[u] =1;  
+}
+int find_set(int u){
+    if(u == parent[u]){
+        return u; 
+    }
+    return find_set(parent[u]); 
+}
+void union_set(int a , int b){
+    a =find_set(a); 
+    b =find_set(b);
+    if(a ==b) {
+        return; 
+    } 
+    if(sz[a] < sz[b]){
+        swap(a ,b); 
+    }
+    parent[b] =a; 
+    sz[a]+= sz[b]; 
+}
 void solve()
 {
     int n ; 
     cin >> n ; 
-    string s; 
-    cin >>s ;
-    int mod = 998244353; 
-    int dp[n+1][1024][10];
-    memset(dp , 0 ,sizeof(dp)); 
-    rep(i ,0, n-1) {
-        int x = s[i]-'A'; 
-        rep(j ,0 ,1023){
-            rep(c, 0, 9){
-                dp[i+1][j][c] = dp[i][j][c]; 
-                if(c == x){
-                    dp[i+1][j][x]= (dp[i+1][j][x]+ dp[i][j][x])%mod; 
-                } 
-            }
+    v<pair<int,pair<int,int>>>e(n-1); 
+    rep(i ,1 ,n ){
+        makeset(i); 
+        if(i == n ){
+            continue;
         }
-        rep(j ,0, 1023){
-            if(j&(1<<x)){
-                continue;
-            }
-            rep(c, 0, 9){
-                    dp[i+1][j|((1<<x))][x]+= dp[i][j][c]; 
-                    dp[i+1][j|((1<<x))][x]%=mod; 
-            }
-        }
-        dp[i+1][(1<<x)][x]++;
-        dp[i+1][(1<<x)][x]%=mod; 
-         
-    }
+        int u ,v, w; 
+        cin >>u>>v>>w; 
+        e[i-1] ={w , {u,v}}; 
+    }   
+    sort(e.begin() ,e.end()); 
     int ans =0 ; 
-    rep(i ,0 ,1023){
-        rep(j ,0 ,9){
-            ans+= dp[n][i][j]; 
-            ans%=mod; 
-        }
+    for (auto i :e)
+    {
+        ans += sz[find_set(i.second.first)]*sz[find_set(i.second.second)]*i.first; 
+        union_set(i.second.first , i.second.second); 
     }
-    cout<<ans<<endl; 
+    cout<<ans<<endl;
 }
 signed main()
 {
@@ -130,3 +137,4 @@ signed main()
     cerr << " sec " << endl;
     return 0;
 }
+
